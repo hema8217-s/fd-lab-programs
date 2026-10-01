@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Registration Form</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #e7b9b9;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
+    }
+
+    form {
+      width: 300px;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      background: rgb(240, 162, 240);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      box-sizing: border-box;
+      border-radius: 10px;
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+      width: auto;
+    }
+
+    p {
+      color: red;
+      font-size: 13px;
+      margin: 2px;
+    }
+
+    button {
+      background: rgb(47, 162, 228);
+      color: white;
+      border: 0;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<form onsubmit="return validate()">
+
+  <h2>Registration Form</h2>
+
+  <label>Full Name</label>
+  <input type="text" id="name" placeholder="Enter your name">
+  <p id="n"></p>
+
+  <label>Email</label>
+  <input type="email" id="email" placeholder="Enter your email">
+  <p id="e"></p>
+
+  <label>Password</label>
+  <input type="password" id="pass" placeholder="Enter password">
+  <p id="p"></p>
+
+  
+
+  <label>Gender</label>
+  <select id="course">
+    <option value="">Select Gender</option>
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+    <option value="Others">Others</option>
+  </select>
+  <p id="g"></p>
+
+  <label>Course</label><br>
+
+  <input type="radio" name="course" value="BCA">
+  <label>BCA</label>
+
+  <input type="radio" name="course" value="BBA">
+  <label>BBA</label>
+
+  <input type="radio" name="course" value="BCom">
+  <label>BCom</label>
+
+  <p id="c"></p>
+
+  <input type="checkbox" id="terms">
+  <label>I agree to terms</label>
+  <p id="t"></p>
+
+  <button type="submit">Register</button>
+
+</form>
+
+<script>
+
+function validate() {
+
+  // Get form elements
+  let name = document.getElementById("name");
+  let email = document.getElementById("email");
+  let pass = document.getElementById("pass");
+  let course = document.getElementById("course");
+  let terms = document.getElementById("terms");
+  let ok = true;
+  document.getElementById("n").innerHTML = "";
+  document.getElementById("e").innerHTML = "";
+  document.getElementById("p").innerHTML = "";
+  document.getElementById("g").innerHTML = "";
+  document.getElementById("c").innerHTML = "";
+  document.getElementById("t").innerHTML = "";
+
+
+  if (name.value == "") {
+    document.getElementById("n").innerHTML =
+      "Name is required";
+    ok = false;
+  }
+
+  else if (name.value.length < 3) {
+    document.getElementById("n").innerHTML =
+      "Name must be at least 3 characters";
+    ok = false;
+  }
+
+  else if (!/^[A-Za-z ]+$/.test(name.value)) {
+    document.getElementById("n").innerHTML =
+      "Name must contain only letters";
+    ok = false;
+  }
+
+
+  if (email.value == "") {
+    document.getElementById("e").innerHTML =
+      "Email is required";
+    ok = false;
+  }
+
+  else if (!email.value.includes("@")) {
+    document.getElementById("e").innerHTML =
+      "Enter a valid email";
+    ok = false;
+  }
+
+
+  if (pass.value == "") {
+    document.getElementById("p").innerHTML =
+      "Password is required";
+    ok = false;
+  }
+
+  else if (pass.value.length < 6) {
+    document.getElementById("p").innerHTML =
+      "Password must be at least 6 characters";
+    ok = false;
+  }
+
+  else if (!/[A-Z]/.test(pass.value)) {
+    document.getElementById("p").innerHTML =
+      "Password must contain one capital letter";
+    ok = false;
+  }
+
+  else if (!/[0-9]/.test(pass.value)) {
+    document.getElementById("p").innerHTML =
+      "Password must contain one number";
+    ok = false;
+  }
+
+
+  if (!document.querySelector(
+      'input[name="gender"]:checked')) {
+
+    document.getElementById("g").innerHTML =
+      "Please select gender";
+
+    ok = false;
+  }
+
+
+  if (course.value == "") {
+    document.getElementById("c").innerHTML =
+      "Please select a course";
+
+    ok = false;
+  }
+
+
+  if (!terms.checked) {
+    document.getElementById("t").innerHTML =
+      "Please accept the terms";
+
+    ok = false;
+  }
+
+
+  if (ok) {
+    alert("✓ Registration Successful!");
+  }
+
+  return false;
+}
+
+</script>
+</body>
+</html>

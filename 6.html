@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Basic Calculator</title>
+	<style>
+		* { box-sizing: border-box; }
+		body {
+			margin: 0;
+			min-height: 100vh;
+			display: grid;
+			place-items: center;
+			font-family: Arial, sans-serif;
+			background: #eef2f7;
+		}
+		.calculator {
+			width: min(92vw, 340px);
+			padding: 20px;
+			border-radius: 16px;
+			background: #202938;
+			box-shadow: 0 10px 30px #0003;
+		}
+		#display {
+			width: 100%;
+			height: 70px;
+			margin-bottom: 16px;
+			padding: 10px;
+			border: 0;
+			border-radius: 8px;
+			color: #fff;
+			background: #111827;
+			font-size: 2rem;
+			text-align: right;
+		}
+		.keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+		button {
+			height: 58px;
+			border: 0;
+			border-radius: 8px;
+			color: #172033;
+			background: #e5e7eb;
+			font-size: 1.2rem;
+			cursor: pointer;
+		}
+		button:hover { background: #d1d5db; }
+		.operator, .equals { color: #fff; background: #2563eb; }
+		.operator:hover, .equals:hover { background: #1d4ed8; }
+		.clear { color: #fff; background: #dc2626; }
+		.clear:hover { background: #b91c1c; }
+		.zero { grid-column: span 2; }
+	</style>
+</head>
+<body>
+	<main class="calculator">
+		<input id="display" type="text" value="0" readonly aria-label="Calculator display">
+		<section class="keys">
+			<button class="operator" data-value="/">÷</button>
+			<button data-value="7">7</button><button data-value="8">8</button><button data-value="9">9</button>
+			<button class="operator" data-value="*">×</button>
+			<button data-value="4">4</button><button data-value="5">5</button><button data-value="6">6</button>
+			<button class="operator" data-value="-">−</button>
+			<button data-value="1">1</button><button data-value="2">2</button><button data-value="3">3</button>
+			<button class="operator" data-value="+">+</button>
+			<button class="zero" data-value="0">0</button><button data-value=".">.</button>
+			<button class="operator" data-value="%">%</button>
+			<button class="clear" data-action="clear">C</button>
+			<button data-action="delete">⌫</button>
+			<button class="equals" data-action="equals">=</button>
+		</section>
+	</main>
+	<script>
+		const display = document.getElementById('display');
+		let expression = '';
+		const validCharacters = /^[0-9+\-*/%.() ]+$/;
+
+		function validExpression(value) {
+			if (!value || !validCharacters.test(value)) return false;
+			if (/[+\-*/%.]{2,}/.test(value) || /[+\-*/%.]$/.test(value)) return false;
+			if ((value.match(/\(/g) || []).length !== (value.match(/\)/g) || []).length) return false;
+			return !/\d\(/.test(value) && !/\)\d/.test(value);
+		}
+
+		function update(value) { display.value = value || '0'; }
+		function calculate() {
+			if (!validExpression(expression)) { update('Invalid input'); return; }
+			try {
+				const result = Function('"use strict"; return (' + expression + ')')();
+				if (typeof result !== 'number' || !Number.isFinite(result)) throw new Error();
+				expression = String(result);
+				update(expression);
+			} catch { update('Invalid input'); expression = ''; }
+		}
+		document.querySelector('.keys').addEventListener('click', (event) => {
+			const button = event.target.closest('button');
+			if (!button) return;
+			const { action } = button.dataset;
+			if (action === 'clear') { expression = ''; update(''); }
+			else if (action === 'delete') { expression = expression.slice(0, -1); update(expression); }
+			else if (action === 'equals') calculate();
+			else if (button.dataset.value && validCharacters.test(button.dataset.value)) {
+				const next = expression + button.dataset.value;
+				if (!/[+\-*/%.]$/.test(expression) || !/[+\-*/%.]/.test(button.dataset.value)) {
+					expression = next;
+					update(expression);
+				}
+			}
+		});
+		document.addEventListener('keydown', (event) => {
+			if ('0123456789.+-*/%'.includes(event.key)) {
+				event.preventDefault();
+				if (!/[+\-*/%.]$/.test(expression) || !/[+\-*/%.]/.test(event.key)) {
+					expression += event.key;
+					update(expression);
+				}
+			}
+			else if (event.key === 'Enter') calculate();
+			else if (event.key === 'Backspace') { expression = expression.slice(0, -1); update(expression); }
+			else if (event.key === 'Escape') { expression = ''; update(''); }
+		});
+	</script>
+</body>
+</html>
